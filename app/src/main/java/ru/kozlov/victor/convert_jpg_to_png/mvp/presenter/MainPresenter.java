@@ -7,9 +7,7 @@ import android.widget.Toast;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
-import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.image_converter.JpgToPngImageConverter;
@@ -31,14 +29,20 @@ public class MainPresenter extends MvpPresenter<MainView> {
     }
 
     public void convertButtonClick() {
-        Completable completable = Completable.fromAction(new Action() {
-            @Override
-            public void run() {
-                converter.convertImage(jpgImagePath);
-            }
-        });
-        completable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
+        converter.convertImage(jpgImagePath)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> {
+
+                });
+//        Completable completable = Completable.fromAction(new Action() {
+//            @Override
+//            public void run() {
+//                converter.convertImage(jpgImagePath);
+//            }
+//        });
+//        completable.subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread());
 
 //        if (converter.convertImage(jpgImagePath))
 //            Toast.makeText(App.getInstance().getApplicationContext(), "File converted successfully", Toast.LENGTH_LONG);
