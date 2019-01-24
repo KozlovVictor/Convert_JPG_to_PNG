@@ -1,6 +1,7 @@
 package ru.kozlov.victor.convert_jpg_to_png.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,9 +15,11 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import ru.kozlov.victor.convert_jpg_to_png.R;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.presenter.MainPresenter;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
+import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
-    static final int REQUEST_IMAGE_OPEN = 1;
+    private static final int REQUEST_IMAGE_OPEN = 1;
+    private static final String SELECT_PICTURE = "Select picture";
 
     ImageView iv_imageToConvert;
     Button btn_selectImage;
@@ -44,29 +47,34 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         btn_convert.setOnClickListener(view -> presenter.convertButtonClick());
     }
 
+    @Override
+    public void setImageToConvert(Bitmap bitmap) {
+        iv_imageToConvert.setImageBitmap(bitmap);
+    }
+
     @ProvidePresenter
-    public MainPresenter providePresenter() {
+    public MainPresenter provideMainPresenter() {
         return new MainPresenter();
     }
 
     @Override
     public void selectImage() {
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        Intent intent = new Intent();
         intent.setType("image/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        startActivityForResult(intent, REQUEST_IMAGE_OPEN);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, SELECT_PICTURE), REQUEST_IMAGE_OPEN);
     }
 
-    @Override
-    public void saveImage() {
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        Timber.d("REQUEST_IMAGE_OPEN = " + requestCode + " RESULT_CODE = " + requestCode);
         if (requestCode == REQUEST_IMAGE_OPEN && resultCode == RESULT_OK) {
-            Uri fullImageUri = data.getData();
-            presenter.setLoadedImage(fullImageUri);
+            Uri fullImageUri = null;
+            if (data != null) {
+                fullImageUri = data.getData();
+            }
+            presenter.setSelectedImage(fullImageUri);
         }
     }
 }

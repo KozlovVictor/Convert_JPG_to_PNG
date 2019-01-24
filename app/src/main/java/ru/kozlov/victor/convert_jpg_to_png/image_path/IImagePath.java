@@ -5,4 +5,6 @@ import android.net.Uri;
 public interface IImagePath {
 
     void setImagePath(Uri fullImageUri);
+
+    Uri getImagePath();
 }

@@ -1,13 +1,15 @@
 package ru.kozlov.victor.convert_jpg_to_png.mvp.presenter;
 
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 
-import ru.kozlov.victor.convert_jpg_to_png.image_path.JpgImagePath;
+import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.image_converter.JpgToPngImageConverter;
-import ru.kozlov.victor.convert_jpg_to_png.image_path.PngImagePath;
+import ru.kozlov.victor.convert_jpg_to_png.image_path.JpgImagePath;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
 
 @InjectViewState
@@ -15,7 +17,6 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     private JpgToPngImageConverter converter;
     private JpgImagePath jpgImagePath;
-    private PngImagePath pngImagePath;
 
     public MainPresenter() {
         converter = new JpgToPngImageConverter();
@@ -26,13 +27,18 @@ public class MainPresenter extends MvpPresenter<MainView> {
     }
 
     public void convertButtonClick() {
-        converter.convertImage(jpgImagePath);
+        if (converter.convertImage(jpgImagePath))
+            Toast.makeText(App.getInstance().getApplicationContext(), "File converted successfully", Toast.LENGTH_LONG);
+        else
+            Toast.makeText(App.getInstance().getApplicationContext(), "Fail file convert", Toast.LENGTH_LONG);
     }
 
-    public void setLoadedImage(Uri fullImageUri) {
+    public void setSelectedImage(Uri fullImageUri) {
         if (fullImageUri != null) {
             jpgImagePath = new JpgImagePath();
             jpgImagePath.setImagePath(fullImageUri);
-        }
+            getViewState().setImageToConvert(BitmapFactory.decodeFile(fullImageUri.getPath()));
+        } else
+            Toast.makeText(App.getInstance().getApplicationContext(), "ImageURi = null", Toast.LENGTH_LONG);
     }
 }

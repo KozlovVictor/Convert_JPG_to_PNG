@@ -4,5 +4,5 @@ import ru.kozlov.victor.convert_jpg_to_png.image_path.IImagePath;
 
 public interface IImageConverter {
 
-    void convertImage(IImagePath imagePath);
+    Boolean convertImage(IImagePath targetImage);
 }

@@ -9,4 +9,9 @@ public class JpgImagePath implements IImagePath {
     public void setImagePath(Uri fullImageUri) {
         this.fullImageUri = fullImageUri;
     }
+
+    @Override
+    public Uri getImagePath() {
+        return fullImageUri;
+    }
 }
