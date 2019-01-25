@@ -9,9 +9,9 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 @StateStrategyType(value = AddToEndStrategy.class)
 public interface MainView extends MvpView {
 
-    void selectImage();
+    void pickImage();
 
-    void setImageToConvert(Bitmap bitmap);
+    void showImage(Bitmap bitmap);
 
-    void showResultConvertMessage(String message);
+    void showConversionResultMessage(String message);
 }

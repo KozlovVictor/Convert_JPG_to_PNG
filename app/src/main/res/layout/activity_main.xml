@@ -14,17 +14,9 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/image_to_convert" />
+        android:contentDescription="@string/pick_image_to_convert"
+        android:tooltipText="@string/pick_image_to_convert" />
 
-    <Button
-        android:id="@+id/btn_select_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/select_image_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/iv_image"/>
 
     <Button
         android:id="@+id/btn_convert"
@@ -34,6 +26,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_select_img"/>
+        app:layout_constraintTop_toTopOf="@id/iv_image" />
 
 </android.support.constraint.ConstraintLayout>

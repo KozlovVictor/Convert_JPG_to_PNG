@@ -20,6 +20,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     private final String CONVERT_SUCCESS = "File converted successfully";
     private final String CONVERT_FAIL = "Fail file convert";
+    private final String CONVERT_CANCEL = "Cancel file convert";
 
     private JpgToPngImageConverter converter;
     private JpgImagePath jpgImagePath;
@@ -29,8 +30,8 @@ public class MainPresenter extends MvpPresenter<MainView> {
         converter = new JpgToPngImageConverter();
     }
 
-    public void selectImageButtonClick() {
-        getViewState().selectImage();
+    public void imageClick() {
+        getViewState().pickImage();
     }
 
     public void convertButtonClick() {
@@ -45,12 +46,12 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
                     @Override
                     public void onComplete() {
-                        getViewState().showResultConvertMessage(CONVERT_SUCCESS);
+                        getViewState().showConversionResultMessage(CONVERT_SUCCESS);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        getViewState().showResultConvertMessage(CONVERT_FAIL);
+                        getViewState().showConversionResultMessage(CONVERT_FAIL);
                     }
                 });
     }
@@ -59,7 +60,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
         if (fullImageUri != null) {
             jpgImagePath = new JpgImagePath();
             jpgImagePath.setImagePath(fullImageUri);
-            getViewState().setImageToConvert(BitmapFactory.decodeFile(fullImageUri.getPath()));
+            getViewState().showImage(BitmapFactory.decodeFile(fullImageUri.getPath()));
         } else
             Timber.d("Full Image Uri = null");
     }

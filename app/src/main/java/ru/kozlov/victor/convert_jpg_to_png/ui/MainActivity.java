@@ -1,10 +1,16 @@
 package ru.kozlov.victor.convert_jpg_to_png.ui;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -20,11 +26,13 @@ import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
 import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
-    private static final int REQUEST_IMAGE_OPEN = 1;
+
+    public static final int PERMISSION_REQUEST_CODE = 0;
+    private static final String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     private static final String SELECT_PICTURE = "Select picture";
+    private static final int PICK_IMAGE_REQUEST_CODE = 1;
 
     ImageView iv_imageToConvert;
-    Button btn_selectImage;
     Button btn_convert;
 
     @InjectPresenter
@@ -41,21 +49,19 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     private void initUI() {
         iv_imageToConvert = findViewById(R.id.iv_image);
-        btn_selectImage = findViewById(R.id.btn_select_img);
         btn_convert = findViewById(R.id.btn_convert);
 
-        btn_selectImage.setOnClickListener(view -> presenter.selectImageButtonClick());
-
+        iv_imageToConvert.setOnClickListener(view -> presenter.imageClick());
         btn_convert.setOnClickListener(view -> presenter.convertButtonClick());
     }
 
     @Override
-    public void setImageToConvert(Bitmap bitmap) {
+    public void showImage(Bitmap bitmap) {
         iv_imageToConvert.setImageBitmap(bitmap);
     }
 
     @Override
-    public void showResultConvertMessage(String message) {
+    public void showConversionResultMessage(String message) {
         Toast.makeText(App.getInstance().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
@@ -65,18 +71,60 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     }
 
     @Override
-    public void selectImage() {
+    public void pickImage() {
+        if (!checkPermissions()) {
+            requestPermissions();
+            return;
+        }
+        onPermissionGranted();
+    }
+
+    private boolean checkPermissions() {
+        for (String permission : permissions) {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, permissions, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    onPermissionGranted();
+                } else {
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.permission_required)
+                            .setMessage(R.string.request_permisson_message)
+                            .setPositiveButton("Ok", (dialogInterface, i) -> {
+                                requestPermissions();
+                            })
+                            .setOnCancelListener(dialogInterface -> requestPermissions())
+                            .create()
+                            .show();
+                }
+                return;
+        }
+    }
+
+    private void onPermissionGranted() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, SELECT_PICTURE), REQUEST_IMAGE_OPEN);
+        startActivityForResult(Intent.createChooser(intent, SELECT_PICTURE), PICK_IMAGE_REQUEST_CODE);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Timber.d("REQUEST_IMAGE_OPEN = " + requestCode + " RESULT_CODE = " + requestCode);
-        if (requestCode == REQUEST_IMAGE_OPEN && resultCode == RESULT_OK) {
+        Timber.d("PICK_IMAGE_REQUEST_CODE = " + requestCode + " RESULT_CODE = " + requestCode);
+        if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri fullImageUri = null;
             if (data != null) {
                 fullImageUri = data.getData();
