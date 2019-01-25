@@ -1,17 +1,16 @@
 package ru.kozlov.victor.convert_jpg_to_png.mvp.presenter;
 
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+
+import java.io.File;
 
 import io.reactivex.CompletableObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import ru.kozlov.victor.convert_jpg_to_png.image_converter.JpgToPngImageConverter;
-import ru.kozlov.victor.convert_jpg_to_png.image_path.JpgImagePath;
+import ru.kozlov.victor.convert_jpg_to_png.image_path.ConvertImagePaths;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
 import timber.log.Timber;
 
@@ -23,7 +22,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private final String CONVERT_CANCEL = "Cancel file convert";
 
     private JpgToPngImageConverter converter;
-    private JpgImagePath jpgImagePath;
+    private ConvertImagePaths convertImagePaths;
     private Disposable convertationSubscription;
 
     public MainPresenter() {
@@ -35,7 +34,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     }
 
     public void convertButtonClick() {
-        converter.convertImage(jpgImagePath)
+        converter.convertImage(convertImagePaths)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new CompletableObserver() {
@@ -56,12 +55,27 @@ public class MainPresenter extends MvpPresenter<MainView> {
                 });
     }
 
-    public void setSelectedImage(Uri fullImageUri) {
-        if (fullImageUri != null) {
-            jpgImagePath = new JpgImagePath();
-            jpgImagePath.setImagePath(fullImageUri);
-            getViewState().showImage(BitmapFactory.decodeFile(fullImageUri.getPath()));
+    public void setSelectedImage(String imagePath) {
+        if (imagePath != null) {
+            convertImagePaths = new ConvertImagePaths();
+            convertImagePaths.setSourceImagePath(imagePath);
+            showImageOnView(imagePath);
+//            chooseDestinationPath();
+            String destPath = imagePath + File.separator + "result.png";
+            setDestinationPath(destPath);
         } else
             Timber.d("Full Image Uri = null");
+    }
+
+    private void chooseDestinationPath() {
+        getViewState().chooseDestinationPath();
+    }
+
+    public void setDestinationPath(String imagePath) {
+        convertImagePaths.setDestinationImagePath(imagePath);
+    }
+
+    private void showImageOnView(String imagePath) {
+        getViewState().showImage(imagePath);
     }
 }

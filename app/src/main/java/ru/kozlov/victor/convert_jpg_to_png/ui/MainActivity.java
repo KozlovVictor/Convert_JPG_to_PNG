@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -19,11 +20,12 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
+import java.io.IOException;
+
 import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.R;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.presenter.MainPresenter;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
-import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
 
@@ -56,13 +58,24 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     }
 
     @Override
-    public void showImage(Bitmap bitmap) {
-        iv_imageToConvert.setImageBitmap(bitmap);
+    public void showImage(String imagePath) {
+        Bitmap bitmap;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(imagePath));
+            iv_imageToConvert.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void showConversionResultMessage(String message) {
         Toast.makeText(App.getInstance().getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void chooseDestinationPath() {
+        //TODO fill this method
     }
 
     @ProvidePresenter
@@ -103,14 +116,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.permission_required)
                             .setMessage(R.string.request_permisson_message)
-                            .setPositiveButton("Ok", (dialogInterface, i) -> {
-                                requestPermissions();
-                            })
+                            .setPositiveButton("Ok", (dialogInterface, i) -> requestPermissions())
                             .setOnCancelListener(dialogInterface -> requestPermissions())
                             .create()
                             .show();
                 }
-                return;
         }
     }
 
@@ -123,13 +133,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        Timber.d("PICK_IMAGE_REQUEST_CODE = " + requestCode + " RESULT_CODE = " + requestCode);
+//        Timber.d("PICK_IMAGE_REQUEST_CODE = " + requestCode + " RESULT_CODE = " + requestCode);
         if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
-            Uri fullImageUri = null;
-            if (data != null) {
-                fullImageUri = data.getData();
-            }
-            presenter.setSelectedImage(fullImageUri);
+            Uri imageUri = null;
+            if (data != null) imageUri = data.getData();
+            presenter.setSelectedImage(imageUri != null ? imageUri.toString() : null);
         }
     }
 }
