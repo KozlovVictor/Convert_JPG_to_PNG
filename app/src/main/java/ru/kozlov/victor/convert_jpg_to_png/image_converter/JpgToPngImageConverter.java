@@ -1,8 +1,14 @@
 package ru.kozlov.victor.convert_jpg_to_png.image_converter;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+
 import io.reactivex.Completable;
+import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.image_path.IImagePaths;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.model.IImageConverter;
+import timber.log.Timber;
 
 public class JpgToPngImageConverter implements IImageConverter {
 
@@ -20,7 +26,11 @@ public class JpgToPngImageConverter implements IImageConverter {
 //            }
 //        });
         return Completable.fromAction(() -> {
-
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(App.getInstance().getContentResolver(), Uri.parse(targetImagePaths.getSourceImagePath()));
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, App.getInstance()
+                    .getContentResolver()
+                    .openOutputStream(Uri.parse(targetImagePaths.getDestinationImagePath())));
+            Timber.d("Compressed!");
         });
     }
 }

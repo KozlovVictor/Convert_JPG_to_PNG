@@ -51,6 +51,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
                     @Override
                     public void onError(Throwable e) {
                         getViewState().showConversionResultMessage(CONVERT_FAIL);
+                        e.printStackTrace();
                     }
                 });
     }

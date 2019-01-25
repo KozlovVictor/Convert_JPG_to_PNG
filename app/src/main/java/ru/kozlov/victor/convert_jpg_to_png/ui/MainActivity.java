@@ -26,6 +26,7 @@ import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.R;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.presenter.MainPresenter;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
+import timber.log.Timber;
 
 public class MainActivity extends MvpAppCompatActivity implements MainView {
 
@@ -133,7 +134,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        Timber.d("PICK_IMAGE_REQUEST_CODE = " + requestCode + " RESULT_CODE = " + requestCode);
+        Timber.d("PICK_IMAGE_REQUEST_CODE = " + requestCode + " RESULT_CODE = " + requestCode);
         if (requestCode == PICK_IMAGE_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri imageUri = null;
             if (data != null) imageUri = data.getData();
