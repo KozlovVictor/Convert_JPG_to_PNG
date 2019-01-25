@@ -12,4 +12,6 @@ public interface MainView extends MvpView {
     void selectImage();
 
     void setImageToConvert(Bitmap bitmap);
+
+    void showResultConvertMessage(String message);
 }

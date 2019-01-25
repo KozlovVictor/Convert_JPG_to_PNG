@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 
+import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.R;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.presenter.MainPresenter;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.view.MainView;
@@ -50,6 +52,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @Override
     public void setImageToConvert(Bitmap bitmap) {
         iv_imageToConvert.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void showResultConvertMessage(String message) {
+        Toast.makeText(App.getInstance().getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     @ProvidePresenter

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 
 import io.reactivex.Completable;
 import ru.kozlov.victor.convert_jpg_to_png.image_path.IImagePath;
+import ru.kozlov.victor.convert_jpg_to_png.mvp.model.IImageConverter;
 
 public class JpgToPngImageConverter implements IImageConverter {
 
