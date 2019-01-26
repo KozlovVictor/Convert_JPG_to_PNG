@@ -22,6 +22,8 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 
 import java.io.IOException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import ru.kozlov.victor.convert_jpg_to_png.App;
 import ru.kozlov.victor.convert_jpg_to_png.R;
 import ru.kozlov.victor.convert_jpg_to_png.mvp.presenter.MainPresenter;
@@ -35,8 +37,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     private static final String SELECT_PICTURE = "Select picture";
     private static final int PICK_IMAGE_REQUEST_CODE = 1;
 
-    ImageView iv_imageToConvert;
-    Button btn_convert;
+    @BindView(R.id.iv_image) ImageView iv_imageToConvert;
+    @BindView(R.id.btn_convert) Button btn_convert;
 
     @InjectPresenter
     MainPresenter presenter;
@@ -46,16 +48,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initUI();
 
-    }
-
-    private void initUI() {
-        iv_imageToConvert = findViewById(R.id.iv_image);
-        btn_convert = findViewById(R.id.btn_convert);
+        ButterKnife.bind(this);
 
         iv_imageToConvert.setOnClickListener(view -> presenter.imageClick());
         btn_convert.setOnClickListener(view -> presenter.convertButtonClick());
+
     }
 
     @Override
@@ -117,7 +115,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.permission_required)
                             .setMessage(R.string.request_permisson_message)
-                            .setPositiveButton("Ok", (dialogInterface, i) -> requestPermissions())
+                            .setPositiveButton(R.string.positive_button, (dialogInterface, i) -> requestPermissions())
                             .setOnCancelListener(dialogInterface -> requestPermissions())
                             .create()
                             .show();
