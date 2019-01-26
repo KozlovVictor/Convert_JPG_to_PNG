@@ -22,6 +22,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 
 import java.io.IOException;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import ru.kozlov.victor.convert_jpg_to_png.App;
@@ -39,6 +40,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @BindView(R.id.iv_image) ImageView iv_imageToConvert;
     @BindView(R.id.btn_convert) Button btn_convert;
+    @BindString(R.string.permission_required) String permissionRequired;
+    @BindString(R.string.request_permisson_message) String requestPermissionMessage;
+    @BindString(R.string.positive_button) String positiveButton;
 
     @InjectPresenter
     MainPresenter presenter;
@@ -113,9 +117,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
                     onPermissionGranted();
                 } else {
                     new AlertDialog.Builder(this)
-                            .setTitle(R.string.permission_required)
-                            .setMessage(R.string.request_permisson_message)
-                            .setPositiveButton(R.string.positive_button, (dialogInterface, i) -> requestPermissions())
+                            .setTitle(permissionRequired)
+                            .setMessage(requestPermissionMessage)
+                            .setPositiveButton(positiveButton, (dialogInterface, i) -> requestPermissions())
                             .setOnCancelListener(dialogInterface -> requestPermissions())
                             .create()
                             .show();
